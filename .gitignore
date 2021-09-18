@@ -1,2 +1,4 @@
+*.o
+odca
 out
 .DS_Store
