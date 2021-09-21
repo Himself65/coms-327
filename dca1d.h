@@ -1,6 +1,7 @@
 #ifndef COM_S327_P1__DCA1D_H_
 #define COM_S327_P1__DCA1D_H_
 #include <stdio.h>
+#include <string.h>
 
 typedef struct {
   unsigned char *p;

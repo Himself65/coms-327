@@ -7,6 +7,7 @@
  * @returns 1DCA
  */
 ODCA init1DCA(int size, unsigned char pointer[]) {
+  memset(pointer, 0, size);
   ODCA dca = {
       .size = size,
       .p = pointer
