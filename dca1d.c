@@ -6,11 +6,11 @@
  * @param pointer[in] a pointer to the start of the array
  * @returns 1DCA
  */
-ODCA init1DCA(int size, unsigned char pointer[]) {
+ODCA init1DCA(int size, unsigned char *pointer) {
   memset(pointer, 0, size);
   ODCA dca = {
       .size = size,
-      .p = pointer
+      .p = &pointer[0]
   };
   return dca;
 }
@@ -40,8 +40,8 @@ int set1DCACell(ODCA *odca, int pos, unsigned int value) {
  */
 void display1DCA(ODCA *odca, int size) {
   for (int i = 0; i < size; ++i) {
-    const unsigned char v = odca->p[size];
-    printf("%c", v);
+    const unsigned char v = odca->p[i];
+    printf("%d ", v);
   }
   printf("\n");
 }
