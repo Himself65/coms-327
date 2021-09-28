@@ -1,18 +1,28 @@
-#include "dca1d.h"
+#include "ca.h"
 const int k_size = 25;
 
-int main() {
-  unsigned char p[k_size];
-  ODCA odca = init1DCA(k_size, p);
-  for (int i = 0; i < 25; ++i) {
-    if (i % 2 == 0) {
-      // even number
-      set1DCACell(&odca, i, 2);
-    } else {
-      // odd number
-      set1DCACell(&odca, i, 1);
-    }
+int in_range(const int input) {
+  const int max_num = 100;
+  const int min_num = 10;
+  if (input >= min_num && input <= max_num) {
+    return 1;
+  } else {
+    return 0;
   }
-  display1DCA(&odca, k_size);
+}
+
+unsigned char aRule(struct ca_data *ca, int index) {
+  // todo
+  ca->odca[index]++;
+  return ca->odca[index];
+}
+
+int main() {
+  struct ca_data *ca = create1DCA(k_size, 1);
+  display1DCA(ca);
+  init1DCA(ca, 2);
+  display1DCA(ca);
+  set1DCACell(ca, 2, 3);
+  display1DCA(ca);
   return 0;
 }

@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g -Wall -I.
-SRCS = dca1d.c main.c
+SRCS = ca.c main.c
 OBJS = $(SRCS:.c=.o)
 TARGET = odca
 
