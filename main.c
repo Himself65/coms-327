@@ -53,34 +53,29 @@ unsigned char aRule(struct ca_data *ca, int index) {
   }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc < 6) {
+    printf("incorrect parameters");
+    return -1;
+  }
   // step 1
-  int size; // size of the cell
-  printf("please input the size of the 1DCA.\n");
-  scanf("%d", &size);
+  int size = atoi(argv[1]); // size of the cell
   if (in_range(size) != 0) {
     printf("incorrect size");
     return -1;
   }
   // step 2
-  int state;
-  printf("number of states for each cell.\n");
-  scanf("%d", &state);
+  int state = atoi(argv[2]); // number of states
 
   // step 3
-  char flag_str[7];
   int flag;
-  printf("input the flag(\"wrap\" or \"or wrap\").\n");
-  scanf("%s", flag_str);
-  if (strcmp(flag_str, "wrap") == 0) {
+  if (strcmp(argv[3], "wrap") == 0) {
     flag = 1;
-  } else if (strcmp(flag_str, "nowrap") == 0) {
+  } else if (strcmp(argv[3], "nowrap") == 0) {
     flag = 0;
   }
   // step 4
-  int init_state = 0;
-  printf("input the init state.\n");
-  scanf("%d", &init_state);
+  int init_state = atoi(argv[4]);
   struct ca_data *ca = NULL;
   if (init_state > 0 && init_state < state) {
     // specific values
@@ -98,9 +93,7 @@ int main() {
     return -1;
   }
   // step 5
-  int step;
-  printf("input the step of the ca\n");
-  scanf("%d", &step);
+  int step = atoi(argv[5]);
   display1DCA(ca);
   for (int i = 0; i < step; ++i) {
     // loop for emulate
