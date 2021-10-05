@@ -14,9 +14,9 @@ int in_range(const int input) {
 }
 
 unsigned char aRule(struct ca_data *ca, int index) {
-  if (ca->odca[index - 1] == 0) {
-    if (ca->odca[index] == 0) {
-      if (ca->odca[index + 1] == 0) {
+  if (ca->cells[index - 1] == 0) {
+    if (ca->cells[index] == 0) {
+      if (ca->cells[index + 1] == 0) {
         // 000
         return 0;
       } else {
@@ -24,7 +24,7 @@ unsigned char aRule(struct ca_data *ca, int index) {
         return 1;
       }
     } else {
-      if (ca->odca[index + 1] == 0) {
+      if (ca->cells[index + 1] == 0) {
         // 010
         return 1;
       } else {
@@ -33,8 +33,8 @@ unsigned char aRule(struct ca_data *ca, int index) {
       }
     }
   } else {
-    if (ca->odca[index] == 0) {
-      if (ca->odca[index + 1] == 0) {
+    if (ca->cells[index] == 0) {
+      if (ca->cells[index + 1] == 0) {
         // 100
         return 0;
       } else {
@@ -42,7 +42,7 @@ unsigned char aRule(struct ca_data *ca, int index) {
         return 1;
       }
     } else {
-      if (ca->odca[index + 1] == 0) {
+      if (ca->cells[index + 1] == 0) {
         // 110
         return 1;
       } else {

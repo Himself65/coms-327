@@ -8,8 +8,8 @@
 #endif
 
 struct ca_data {
+  unsigned char *cells;
   int size;
-  int *odca;
   int init_value;
 };
 
