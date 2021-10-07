@@ -1,7 +1,5 @@
 #include "ca.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
 int in_range(const int input) {
   const int max_num = 100;
