@@ -16,12 +16,22 @@ int set1DCACell(struct ca_data *ca, unsigned int pos, unsigned char value) {
   ca->cells[pos] = value;
   return 0;
 }
+
 void init1DCA(struct ca_data *ca, int init_value) {
   if (ca == NULL) {
     return;
   }
-  for (int i = 0; i < ca->size; i++) {
-    ca->cells[i] = init_value;
+  if (init_value == -1) {
+    // random values
+    time_t t;
+    srand((unsigned) time(&t));
+    for (int i = 0; i < ca->size; i++) {
+      set1DCACell(ca, i, rand() % ca->total_state);
+    }
+  } else {
+    for (int i = 0; i < ca->size; i++) {
+      set1DCACell(ca, i, init_value);
+    }
   }
 }
 
@@ -33,16 +43,14 @@ struct ca_data *create1DCA(int size, unsigned char init_value) {
   if (size < 0) {
     return NULL;
   }
-  int *cells = malloc(sizeof(int) * (size + 2));
+  unsigned char *cells = malloc(sizeof(unsigned char) * (size + 2));
   if (cells == NULL) {
     return NULL;
   }
-  for (int i = 0; i < size + 2; ++i) {
-    cells[i] = init_value;
-  }
-  ca->cells = cells + 1; // allow the ca->cells[-1] operation
+  ca->cells = cells + 1; // allow the ca->cells[-1] and ca->cells[size] operation
   ca->size = size;
   ca->init_value = init_value;
+  init1DCA(ca, init_value);
   return ca;
 }
 

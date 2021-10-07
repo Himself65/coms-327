@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #ifndef NULL
 #define NULL  ((void *)0)
 #endif
@@ -10,7 +11,8 @@
 struct ca_data {
   unsigned char *cells;
   int size;
-  int init_value;
+  int total_state;
+  unsigned char init_value;
 };
 
 void display1DCA(struct ca_data *);

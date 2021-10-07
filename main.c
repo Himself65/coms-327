@@ -55,7 +55,7 @@ unsigned char aRule(struct ca_data *ca, int index) {
 
 int main(int argc, char *argv[]) {
   if (argc < 6) {
-    printf("incorrect parameters");
+    printf("incorrect parameters length");
     return -1;
   }
   // step 1
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   // step 2
-  int state = atoi(argv[2]); // number of states
+  int total_state = atoi(argv[2]); // number of states
 
   // step 3
   int flag;
@@ -77,17 +77,11 @@ int main(int argc, char *argv[]) {
   // step 4
   int init_state = atoi(argv[4]);
   struct ca_data *ca = NULL;
-  if (init_state > 0 && init_state < state) {
+  if (init_state >= -1 && init_state < total_state) {
     // specific values
     ca = create1DCA(size, init_state);
-  } else if (init_state == -1) {
-    // random values
-    time_t t;
-    srand((unsigned) time(&t));
-    ca = create1DCA(size, 0);
-    for (int i = 0; i < ca->size; ++i) {
-      set1DCACell(ca, i, rand() % state);
-    }
+    ca->total_state = total_state;
+    init1DCA(ca, init_state);
   } else {
     printf("incorrect input init state\n");
     return -1;
