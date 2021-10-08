@@ -33,6 +33,7 @@ void init1DCA(struct ca_data *ca, int init_value) {
       set1DCACell(ca, i, init_value);
     }
   }
+  ca->init_value = init_value;
 }
 
 struct ca_data *create1DCA(int size, unsigned char init_value) {
@@ -68,8 +69,13 @@ void stepCA(struct ca_data *ca, StepFn fn, int flag) {
     ca->cells[ca->size] = ca->cells[0];
   } else {
     // otherwise, the edge values equal to the initial value
-    ca->cells[-1] = ca->init_value;
-    ca->cells[ca->size] = ca->init_value;
+    if (ca->init_value == -1) {
+      ca->cells[-1] = rand() % ca->total_state;
+      ca->cells[ca->size] = rand() % ca->total_state;
+    } else {
+      ca->cells[-1] = ca->init_value;
+      ca->cells[ca->size] = ca->init_value;
+    }
   }
   for (int i = 0; i < ca->size; ++i) {
     int new_value = fn(ca, i);

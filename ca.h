@@ -12,7 +12,7 @@ struct ca_data {
   unsigned char *cells;
   int size;
   int total_state;
-  unsigned char init_value;
+  int init_value;
 };
 
 void display1DCA(struct ca_data *);
