@@ -59,10 +59,6 @@ void stepCA(struct ca_data *ca, StepFn fn, int flag) {
   if (ca == NULL) {
     return;
   }
-  int *new_states = malloc(sizeof(int) * ca->size);
-  if (new_states == NULL) {
-    return;
-  }
   if (flag) {
     // wrapped around to the other edge of the cellular automata
     ca->cells[-1] = ca->cells[ca->size - 1];
@@ -76,6 +72,11 @@ void stepCA(struct ca_data *ca, StepFn fn, int flag) {
       ca->cells[-1] = ca->init_value;
       ca->cells[ca->size] = ca->init_value;
     }
+  }
+  unsigned char *new_states = malloc(sizeof(unsigned char) * ca->size);
+  if (new_states == NULL) {
+    printf("error in stepCA, cannot malloc the memory\n");
+    return;
   }
   for (int i = 0; i < ca->size; ++i) {
     int new_value = fn(ca, i);

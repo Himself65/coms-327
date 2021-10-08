@@ -78,6 +78,10 @@ int main(int argc, char *argv[]) {
   if (init_state >= -1 && init_state < total_state) {
     // specific values
     ca = create1DCA(size, init_state);
+    if (ca == NULL) {
+      printf("error when create 1dca\n");
+      return -1;
+    }
     ca->total_state = total_state;
     init1DCA(ca, init_state);
   } else {
