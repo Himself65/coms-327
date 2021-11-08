@@ -15,13 +15,15 @@ struct ca_data {
   int init_value;
 };
 
-void display1DCA(struct ca_data *);
-int set1DCACell(struct ca_data *, unsigned int, unsigned char);
-void init1DCA(struct ca_data *, int);
-struct ca_data *create1DCA(int, unsigned char);
-
-typedef unsigned char (*StepFn)(struct ca_data *, int);
-
-void stepCA(struct ca_data *, StepFn, int);
+void display1DCA(struct ca_data *ca);
+int set1DCACell(struct ca_data *ca, unsigned int x, unsigned char state);
+int set2DCACell(struct ca_data *ca, unsigned int x, unsigned int y, unsigned char state);
+void init1DCA(struct ca_data *ca, int state);
+// x, y are index for the cell
+void step1DCA(struct ca_data *ca, unsigned char (*rule)(struct ca_data *, int x));
+void step2DCA(struct ca_data *ca, unsigned char (*rule)(struct ca_data *, int x, int y));
+// w, h give the size of the CA
+struct ca_data *create1DCA(int w, unsigned char q_state);
+struct ca_data *create2DCA(int w, int h, unsigned char q_state);
 
 #endif //COM_S_327_P1__CA_H_
