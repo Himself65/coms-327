@@ -86,4 +86,5 @@ void stepCA(struct ca_data *ca, StepFn fn, int flag) {
   for (int i = 0; i < ca->size; ++i) {
     ca->cells[i] = new_states[i];
   }
+  free(new_states);
 }
