@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -g -Wall -I.
 SRCS = ca.c main.c
 OBJS = $(SRCS:.c=.o)
-TARGET = odca
+TARGET = gol
 
 all: $(OBJS)
 	@$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)

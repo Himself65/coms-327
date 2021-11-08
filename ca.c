@@ -1,23 +1,42 @@
 #include "ca.h"
 
-void display1DCA(struct ca_data *ca) {
-  for (int pos = 0; pos < ca->size; pos++) {
-    printf("%d%c", ca->cadata[pos], pos + 1 == ca->size ? '\n' : ' ');
+void displayCA(struct ca_data *ca) {
+  for (int x = 0; x < ca->width; x++) {
+    for (int y = 0; y < ca->height; y++) {
+      printf("%d%c", ca->cadata[x][y], x + 1 == ca->width ? '\n' : ' ');
+    }
   }
 }
 
-int set1DCACell(struct ca_data *ca, unsigned int pos, unsigned char value) {
+void set_ca_intl(struct ca_data *ca, unsigned int x, unsigned int y, unsigned char v) {
+  ca->cadata[x][y] = v;
+}
+
+int set1DCACell(struct ca_data *ca, unsigned int x, unsigned char state) {
   if (ca == NULL) {
     return 1;
   }
-  if (pos < 0 || pos > ca->size) {
+  if (x < 0 || x >= ca->width) {
     return -1;
   }
-  ca->cadata[pos] = value;
+  set_ca_intl(ca, x, 0, state);
   return 0;
 }
 
-void init1DCA(struct ca_data *ca, int init_value) {
+int set2DCACell(struct ca_data *ca, unsigned int x, unsigned int y, unsigned char state) {
+  if (ca == NULL) {
+    return 1;
+  }
+  if (x < 0 || x >= ca->width) {
+    return -1;
+  } else if (y < 0 || y >= ca->height) {
+    return -1;
+  }
+  set_ca_intl(ca, x, y, state);
+  return 0;
+}
+
+void initCA(struct ca_data *ca, int init_value) {
   if (ca == NULL) {
     return;
   }
@@ -25,66 +44,94 @@ void init1DCA(struct ca_data *ca, int init_value) {
     // random values
     time_t t;
     srand((unsigned) time(&t));
-    for (int i = 0; i < ca->size; i++) {
-      set1DCACell(ca, i, rand() % ca->total_state);
+    for (int x = 0; x < ca->width; x++) {
+      for (int y = 0; y < ca->height; y++) {
+        set_ca_intl(ca, x, y, rand() % ca->total_state);
+      }
     }
   } else {
-    for (int i = 0; i < ca->size; i++) {
-      set1DCACell(ca, i, init_value);
+    for (int x = 0; x < ca->width; x++) {
+      for (int y = 0; y < ca->height; y++) {
+        set_ca_intl(ca, x, y, init_value);
+      }
     }
   }
-  ca->init_value = init_value;
 }
 
-struct ca_data *create1DCA(int size, unsigned char init_value) {
+static unsigned char **create_data_intl(int width, int height) {
+  unsigned char **arr = malloc(sizeof(unsigned char *) * width);
+  for (int x = 0; x < width; ++x) {
+    arr[x] = malloc(sizeof(unsigned char) * height);
+  }
+  return arr;
+}
+
+struct ca_data *create1DCA(int width, unsigned char q_state) {
+  if (width < 0) {
+    return NULL;
+  }
   struct ca_data *ca = malloc(sizeof(struct ca_data));
   if (ca == NULL) {
     return NULL;
   }
-  if (size < 0) {
+  ca->cadata = create_data_intl(width, 1);
+  if (ca->cadata == NULL) {
+    free(ca);
     return NULL;
   }
-  unsigned char *cells = malloc(sizeof(unsigned char) * (size + 2));
-  if (cells == NULL) {
-    return NULL;
-  }
-  ca->cadata = cells + 1; // allow the ca->cadata[-1] and ca->cadata[size] operation
-  ca->size = size;
-  ca->init_value = init_value;
-  init1DCA(ca, init_value);
+  ca->width = width;
+  ca->height = 1;
+  ca->dimension = 1;
+  initCA(ca, q_state);
   return ca;
 }
 
-void stepCA(struct ca_data *ca, StepFn fn, int flag) {
+struct ca_data *create2DCA(int width, int height, unsigned char q_state) {
+  if (width < 0 || height < 0) {
+    return NULL;
+  }
+  struct ca_data *ca = malloc(sizeof(struct ca_data));
+  if (ca == NULL) {
+    return NULL;
+  }
+  ca->cadata = create_data_intl(width, height);
+  if (ca->cadata == NULL) {
+    free(ca);
+    return NULL;
+  }
+  ca->width = width;
+  ca->height = height;
+  ca->dimension = 2;
+  initCA(ca, q_state);
+  return ca;
+}
+
+void step1DCA(struct ca_data *ca, unsigned char (*rule)(struct ca_data *, int x)) {
   if (ca == NULL) {
     return;
   }
-  if (flag) {
-    // wrapped around to the other edge of the cellular automata
-    ca->cadata[-1] = ca->cadata[ca->size - 1];
-    ca->cadata[ca->size] = ca->cadata[0];
-  } else {
-    // otherwise, the edge values equal to the initial value
-    if (ca->init_value == -1) {
-      ca->cadata[-1] = rand() % ca->total_state;
-      ca->cadata[ca->size] = rand() % ca->total_state;
-    } else {
-      ca->cadata[-1] = ca->init_value;
-      ca->cadata[ca->size] = ca->init_value;
-    }
+  unsigned char **new_data = create_data_intl(ca->width, 1);
+  for (int x = 0; x < ca->width; ++x) {
+    new_data[x][0] = rule(ca, x);
   }
-  unsigned char *new_states = malloc(sizeof(unsigned char) * ca->size);
-  if (new_states == NULL) {
-    printf("error in stepCA, cannot malloc the memory\n");
+  for (int x = 0; x < ca->width; ++x) {
+    ca->cadata[x][0] = new_data[x][0];
+  }
+}
+
+void step2DCA(struct ca_data *ca, unsigned char (*rule)(struct ca_data *, int x, int y)) {
+  if (ca == NULL) {
     return;
   }
-  for (int i = 0; i < ca->size; ++i) {
-    int new_value = fn(ca, i);
-    new_states[i] = new_value;
+  unsigned char **new_data = create_data_intl(ca->width, ca->height);
+  for (int x = 0; x < ca->width; ++x) {
+    for (int y = 0; y < ca->height; ++y) {
+      new_data[x][y] = rule(ca, x, y);
+    }
   }
-  // set the new value to the original
-  for (int i = 0; i < ca->size; ++i) {
-    ca->cadata[i] = new_states[i];
+  for (int x = 0; x < ca->width; ++x) {
+    for (int y = 0; y < ca->height; ++y) {
+      ca->cadata[x][y] = new_data[x][y];
+    }
   }
-  free(new_states);
 }

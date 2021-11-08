@@ -1,100 +1,77 @@
 #include "ca.h"
 #include <stdio.h>
 
-int in_range(const int input) {
-  const int max_num = 100;
-  const int min_num = 10;
-  if (input >= min_num && input <= max_num) {
-    return 0;
-  } else {
-    return 1;
-  }
-}
-
-unsigned char aRule(struct ca_data *ca, int index) {
-  if (ca->cadata[index - 1] == 0) {
-    if (ca->cadata[index] == 0) {
-      if (ca->cadata[index + 1] == 0) {
-        // 000
-        return 0;
-      } else {
-        // 001
+unsigned char aRule(struct ca_data *ca, int x, int y) {
+  int width = ca->width;
+  int height = ca->height;
+  if (ca->wrap != 0) {
+    int count = 0;
+    if (ca->cadata[((x - 1) + width) % width][y] != 0) count++; // middle left
+    if (ca->cadata[((x - 1) + width) % width][((y - 1) + height) % height] != 0) count++;  // left top
+    if (ca->cadata[x][((y - 1) + height) % height] != 0) count++; // middle top
+    if (ca->cadata[(x + 1) % width][((y - 1) + height) % height] != 0) count++; // right top
+    if (ca->cadata[(x + 1) % width][y] != 0) count++; // right middle
+    if (ca->cadata[(x + 1) % width][(y + 1) % height] != 0) count++; // right bottom
+    if (ca->cadata[x][(y + 1) % height] != 0) count++; // center bottom
+    if (ca->cadata[((x - 1) + width) % width][(y + 1) % height] != 0) count++; // left bottom
+    // check
+    if (ca->cadata[x][y] == 0) {
+      // dead
+      if (count == 3) {
         return 1;
       }
     } else {
-      if (ca->cadata[index + 1] == 0) {
-        // 010
-        return 1;
-      } else {
-        // 011
-        return 1;
-      }
-    }
-  } else {
-    if (ca->cadata[index] == 0) {
-      if (ca->cadata[index + 1] == 0) {
-        // 100
+      if (count < 2) {
         return 0;
-      } else {
-        // 101
+      } else if (count == 2 || count == 3) {
         return 1;
-      }
-    } else {
-      if (ca->cadata[index + 1] == 0) {
-        // 110
-        return 1;
-      } else {
-        // 111
+      } else if (count > 3) {
         return 0;
       }
     }
   }
 }
 
+char buf[50];
 int main(int argc, char *argv[]) {
-  if (argc < 6) {
+  if (argc < 7) {
     printf("incorrect parameters length");
     return -1;
   }
   // step 1
-  int size = atoi(argv[1]); // size of the cell
-  if (in_range(size) != 0) {
-    printf("incorrect size");
+  int dimension = atoi(argv[1]);
+  if (dimension != 1 && dimension != 2) {
+    printf("incorrect dimension");
     return -1;
   }
   // step 2
-  int total_state = atoi(argv[2]); // number of states
-
-  // step 3
-  int flag;
-  if (strcmp(argv[3], "wrap") == 0) {
-    flag = 1;
-  } else if (strcmp(argv[3], "nowrap") == 0) {
-    flag = 0;
-  }
-  // step 4
-  int init_state = atoi(argv[4]);
-  struct ca_data *ca = NULL;
-  if (init_state >= -1 && init_state < total_state) {
-    // specific values
-    ca = create1DCA(size, init_state);
-    if (ca == NULL) {
-      printf("error when create 1dca\n");
-      return -1;
-    }
-    ca->total_state = total_state;
-    init1DCA(ca, init_state);
-  } else {
-    printf("incorrect input init state\n");
+  const char *path = argv[2];
+  FILE *file = fopen(path, "r");
+  if (file == NULL) {
+    printf("incorrect file path");
     return -1;
   }
-  // step 5
-  int step = atoi(argv[5]);
-  display1DCA(ca);
-  for (int i = 0; i < step; ++i) {
-    // loop for emulate
-    stepCA(ca, aRule, flag);
-    display1DCA(ca);
+  // rows
+  fscanf(file, "%s", buf);
+  unsigned int width = atoi(buf);
+  fscanf(file, "%s", buf);
+  unsigned int height = atoi(buf);
+  struct ca_data *ca = create2DCA(width, height, 0);
+  if (ca == NULL) {
+    return -1;
   }
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      unsigned int value;
+      fscanf(file, "%u", &value);
+      set2DCACell(ca, x, y, value);
+    }
+  }
+  ca->wrap = 1;
+  while (getchar() == '\n') {
+    step2DCA(ca, aRule);
+  }
+  free(ca);
+  fclose(file);
   return 0;
 }
