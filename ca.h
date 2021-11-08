@@ -9,7 +9,11 @@
 #endif
 
 struct ca_data {
-  unsigned char *cells;
+  unsigned char *cadata;  // original data
+  unsigned char dimension; // 1 or 2 dimension(s)
+  unsigned char wrap; // 0 for nowrap, 1 for wrap
+  int width;
+  int height; // for 2 dimensions
   int size;
   int total_state;
   int init_value;

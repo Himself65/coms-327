@@ -2,7 +2,7 @@
 
 void display1DCA(struct ca_data *ca) {
   for (int pos = 0; pos < ca->size; pos++) {
-    printf("%d%c", ca->cells[pos], pos + 1 == ca->size ? '\n' : ' ');
+    printf("%d%c", ca->cadata[pos], pos + 1 == ca->size ? '\n' : ' ');
   }
 }
 
@@ -13,7 +13,7 @@ int set1DCACell(struct ca_data *ca, unsigned int pos, unsigned char value) {
   if (pos < 0 || pos > ca->size) {
     return -1;
   }
-  ca->cells[pos] = value;
+  ca->cadata[pos] = value;
   return 0;
 }
 
@@ -48,7 +48,7 @@ struct ca_data *create1DCA(int size, unsigned char init_value) {
   if (cells == NULL) {
     return NULL;
   }
-  ca->cells = cells + 1; // allow the ca->cells[-1] and ca->cells[size] operation
+  ca->cadata = cells + 1; // allow the ca->cadata[-1] and ca->cadata[size] operation
   ca->size = size;
   ca->init_value = init_value;
   init1DCA(ca, init_value);
@@ -61,16 +61,16 @@ void stepCA(struct ca_data *ca, StepFn fn, int flag) {
   }
   if (flag) {
     // wrapped around to the other edge of the cellular automata
-    ca->cells[-1] = ca->cells[ca->size - 1];
-    ca->cells[ca->size] = ca->cells[0];
+    ca->cadata[-1] = ca->cadata[ca->size - 1];
+    ca->cadata[ca->size] = ca->cadata[0];
   } else {
     // otherwise, the edge values equal to the initial value
     if (ca->init_value == -1) {
-      ca->cells[-1] = rand() % ca->total_state;
-      ca->cells[ca->size] = rand() % ca->total_state;
+      ca->cadata[-1] = rand() % ca->total_state;
+      ca->cadata[ca->size] = rand() % ca->total_state;
     } else {
-      ca->cells[-1] = ca->init_value;
-      ca->cells[ca->size] = ca->init_value;
+      ca->cadata[-1] = ca->init_value;
+      ca->cadata[ca->size] = ca->init_value;
     }
   }
   unsigned char *new_states = malloc(sizeof(unsigned char) * ca->size);
@@ -84,7 +84,7 @@ void stepCA(struct ca_data *ca, StepFn fn, int flag) {
   }
   // set the new value to the original
   for (int i = 0; i < ca->size; ++i) {
-    ca->cells[i] = new_states[i];
+    ca->cadata[i] = new_states[i];
   }
   free(new_states);
 }
