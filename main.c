@@ -5,29 +5,33 @@ unsigned char aRule(struct ca_data *ca, int x, int y) {
   int width = ca->width;
   int height = ca->height;
   int count = 0;
-  if (ca->cadata[((x - 1) + width) % width][y] != 0) count++; // middle left
   if (ca->cadata[((x - 1) + width) % width][((y - 1) + height) % height] != 0) count++;  // left top
+  if (ca->cadata[((x - 1) + width) % width][y] != 0) count++; // middle left
+  if (ca->cadata[((x - 1) + width) % width][(y + 1) % height] != 0) count++; // left bottom
   if (ca->cadata[x][((y - 1) + height) % height] != 0) count++; // middle top
+  if (ca->cadata[x][(y + 1) % height] != 0) count++; // center bottom
+
   if (ca->cadata[(x + 1) % width][((y - 1) + height) % height] != 0) count++; // right top
   if (ca->cadata[(x + 1) % width][y] != 0) count++; // right middle
   if (ca->cadata[(x + 1) % width][(y + 1) % height] != 0) count++; // right bottom
-  if (ca->cadata[x][(y + 1) % height] != 0) count++; // center bottom
-  if (ca->cadata[((x - 1) + width) % width][(y + 1) % height] != 0) count++; // left bottom
+  int exit = 0;
   // check
   if (ca->cadata[x][y] == 0) {
     // dead
     if (count == 3) {
-      return 1;
+      exit = 1;
     }
   } else {
     if (count < 2) {
-      return 0;
+      exit = 0;
     } else if (count == 2 || count == 3) {
-      return 1;
+      exit = 1;
     } else if (count > 3) {
-      return 0;
+      exit = 0;
     }
   }
+  //  printf("pos(%d, %d) %d %d %d from %d~> %d\n", ca->width, ca->height, x, y, count, ca->cadata[x][y], exit);
+  return exit;
 }
 
 char buf[50];
@@ -67,10 +71,14 @@ int main(int argc, char *argv[]) {
     }
   }
   ca->wrap = 1;
+  displayCA(ca);
   while (getchar() == '\n') {
     step2DCA(ca, aRule);
+    displayCA(ca);
+    printf("---press return to continue, other keys to exit ---\n");
   }
   free(ca);
   fclose(file);
+  printf("exit");
   return 0;
 }

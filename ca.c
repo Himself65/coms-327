@@ -3,8 +3,9 @@
 void displayCA(struct ca_data *ca) {
   for (int x = 0; x < ca->width; x++) {
     for (int y = 0; y < ca->height; y++) {
-      printf("%d%c", ca->cadata[x][y], x + 1 == ca->width ? '\n' : ' ');
+      printf("%d ", ca->cadata[x][y]);
     }
+    printf("\n");
   }
 }
 
