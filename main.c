@@ -32,7 +32,7 @@ unsigned char aRule(struct ca_data *ca, int x, int y) {
 
 char buf[50];
 int main(int argc, char *argv[]) {
-  if (argc < 7) {
+  if (argc < 3) {
     printf("incorrect parameters length");
     return -1;
   }
@@ -49,11 +49,12 @@ int main(int argc, char *argv[]) {
     printf("incorrect file path");
     return -1;
   }
-  // rows
-  fscanf(file, "%s", buf);
-  unsigned int width = atoi(buf);
-  fscanf(file, "%s", buf);
-  unsigned int height = atoi(buf);
+  int width = 0;
+  int height = 0;
+  // width
+  fscanf(file, "%d", &width);
+  // height
+  fscanf(file, "%d", &height);
   struct ca_data *ca = create2DCA(width, height, 0);
   if (ca == NULL) {
     return -1;
