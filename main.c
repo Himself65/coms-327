@@ -4,30 +4,28 @@
 unsigned char aRule(struct ca_data *ca, int x, int y) {
   int width = ca->width;
   int height = ca->height;
-  if (ca->wrap != 0) {
-    int count = 0;
-    if (ca->cadata[((x - 1) + width) % width][y] != 0) count++; // middle left
-    if (ca->cadata[((x - 1) + width) % width][((y - 1) + height) % height] != 0) count++;  // left top
-    if (ca->cadata[x][((y - 1) + height) % height] != 0) count++; // middle top
-    if (ca->cadata[(x + 1) % width][((y - 1) + height) % height] != 0) count++; // right top
-    if (ca->cadata[(x + 1) % width][y] != 0) count++; // right middle
-    if (ca->cadata[(x + 1) % width][(y + 1) % height] != 0) count++; // right bottom
-    if (ca->cadata[x][(y + 1) % height] != 0) count++; // center bottom
-    if (ca->cadata[((x - 1) + width) % width][(y + 1) % height] != 0) count++; // left bottom
-    // check
-    if (ca->cadata[x][y] == 0) {
-      // dead
-      if (count == 3) {
-        return 1;
-      }
-    } else {
-      if (count < 2) {
-        return 0;
-      } else if (count == 2 || count == 3) {
-        return 1;
-      } else if (count > 3) {
-        return 0;
-      }
+  int count = 0;
+  if (ca->cadata[((x - 1) + width) % width][y] != 0) count++; // middle left
+  if (ca->cadata[((x - 1) + width) % width][((y - 1) + height) % height] != 0) count++;  // left top
+  if (ca->cadata[x][((y - 1) + height) % height] != 0) count++; // middle top
+  if (ca->cadata[(x + 1) % width][((y - 1) + height) % height] != 0) count++; // right top
+  if (ca->cadata[(x + 1) % width][y] != 0) count++; // right middle
+  if (ca->cadata[(x + 1) % width][(y + 1) % height] != 0) count++; // right bottom
+  if (ca->cadata[x][(y + 1) % height] != 0) count++; // center bottom
+  if (ca->cadata[((x - 1) + width) % width][(y + 1) % height] != 0) count++; // left bottom
+  // check
+  if (ca->cadata[x][y] == 0) {
+    // dead
+    if (count == 3) {
+      return 1;
+    }
+  } else {
+    if (count < 2) {
+      return 0;
+    } else if (count == 2 || count == 3) {
+      return 1;
+    } else if (count > 3) {
+      return 0;
     }
   }
 }
