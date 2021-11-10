@@ -46,6 +46,10 @@ int main(int argc, char *argv[]) {
     printf("incorrect dimension");
     return -1;
   }
+  if (dimension == 1) {
+    printf("we not support 1 dimension yet.");
+    return -1;
+  }
   // step 2
   const char *path = argv[2];
   FILE *file = fopen(path, "r");
