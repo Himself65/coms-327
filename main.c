@@ -34,7 +34,6 @@ unsigned char aRule(struct ca_data *ca, int x, int y) {
   return exit;
 }
 
-char buf[50];
 int main(int argc, char *argv[]) {
   if (argc < 3) {
     printf("incorrect parameters length");
