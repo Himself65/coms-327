@@ -12,18 +12,18 @@
 #include <netinet/ip.h>
 
 enum class Mnemonic {
-  CLEAR = 1,
-  SET_BACKGROUND_COLOR = 2,
-  SET_PIXEL = 3,
-  DRAW_STRING = 5,
-  SET_DRAWING_COLOR = 6,
-  DRAW_RECTANGLE = 7,
-  FILL_RECTANGLE = 8,
-  CLEAR_RECTANGLE = 9,
-  DRAW_OVAL = 10,
-  FILL_OVAL = 11,
-  REPAINT = 12,
-  DRAW_LINE = 13
+  CLEAR = 1, // Clear the display and set every pixel to the background color
+  SET_BACKGROUND_COLOR = 2, // Set the background color to the specified color
+  SET_PIXEL = 3,  // Set the specified pixel location to the specified color
+  DRAW_STRING = 5,  // Draw the specified sting at a specified location
+  SET_DRAWING_COLOR = 6,  // Set the drawing color for text, shapes, and pixels
+  DRAW_RECTANGLE = 7, // Draw the specified rectangle at the specified location
+  FILL_RECTANGLE = 8, // Draw and fill the specified rectangle at the specified location
+  CLEAR_RECTANGLE = 9,  // Clear the specified rectangle at the specified location
+  DRAW_OVAL = 10, // Draw the specified oval at the specified location
+  FILL_OVAL = 11, // Draw and fill the specified oval at the specified location
+  REPAINT = 12, // Cause the graphics server to update the display
+  DRAW_LINE = 13  // Draw the specified line
 };
 
 class GraphicsClient {
@@ -92,15 +92,66 @@ class GraphicsClient {
    */
   void setPixel(int x, int y, int r, int g, int b);
 
+  /**
+   * draws a rectangle at the specified coordinates given by the first two parameters of the specified size given by the last two parameters.
+   * @param x
+   * @param y
+   * @param w width
+   * @param h height
+   */
   void drawRectangle(int x, int y, int w, int h);
 
+  /**
+   * draws a filled rectangle at the position and size given by the parameters.
+   * @param x
+   * @param y
+   * @param w width
+   * @param h height
+   */
   void fillRectangle(int x, int y, int w, int h);
 
+  /**
+   * clears (sets the pixels to the background color) at the location and size specified by the parameters.
+   * @param x
+   * @param y
+   * @param w width
+   * @param h height
+   */
   void clearRectangle(int x, int y, int w, int h);
+
+  /**
+   * draws an oval at the specified location inscribed in a rectangle of the specified size.
+   * @param x
+   * @param y
+   * @param w width
+   * @param h height
+   */
   void drawOval(int x, int y, int w, int h);
+
+  /**
+   * is the same as the drawOval method except the oval is filled.
+   * @param x
+   * @param y
+   * @param w width
+   * @param h height
+   */
   void fillOval(int x, int y, int w, int h);
 
+  /**
+   * draws a line starting a point 1 and ending at point 2.
+   * @param x1
+   * @param y1
+   * @param x2
+   * @param y2
+   */
   void drawLine(int x1, int y1, int x2, int y2);
+
+  /**
+   * draws a string of characters on the display.
+   * @param x
+   * @param y
+   * @param str string that will display
+   */
   void drawstring(int x, int y, const std::string &str);
 
   /**
@@ -108,13 +159,18 @@ class GraphicsClient {
    */
   void repaint();
 
+  /**
+   *
+   * @param url
+   * @param port
+   * @example
+   *    GraphicsClient client("localhost", 7777);
+   */
   GraphicsClient(std::string url, int port);
   GraphicsClient(GraphicsClient &that);
   ~GraphicsClient();
   GraphicsClient &operator=(const GraphicsClient &that);
-
  private:
-
   void sendMessage(std::vector<char> message) const;
   void connectServer();
   void disconnectServer();

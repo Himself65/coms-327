@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
   automaton.connectClient(client);
   client.setBackgroundColor(0, 0, 0);
   client.setDrawingColor(255, 255, 255);
+  client.clear();
   while (std::cin) {
     char ch;
     std::cin >> ch;
