@@ -1,13 +1,13 @@
-CC = gcc
-CFLAGS = -g -Wall -I.
-SRCS = ca.c main.c
-OBJS = $(SRCS:.c=.o)
+CC = g++
+CFLAGS = -std=c++11 -g -Wall -I.
+SRCS = GraphicsClient.cpp CellularAutomaton.cpp main.cpp
+OBJS = $(SRCS:.cpp=.o)
 TARGET = gol
 
 all: $(OBJS)
 	@$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-%.o: %.c
+%.o: %.cpp
 	@$(CC) $(CFLAGS) -o $@ -c $^
 
 .PHONY: clean
