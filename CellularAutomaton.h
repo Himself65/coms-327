@@ -8,15 +8,40 @@
 
 class CellularAutomaton {
  public:
+  /**
+   * takes a single reference parameter to a GraphicsClient object and
+   * display the 2DCA on the attached graphics window associated with the GraphicsClient object.
+   * @param client a single reference parameter to a GraphicsClient object
+   */
   void connectClient(GraphicsClient &client);
-  void step(unsigned char (CellularAutomaton &target, int x, int y));
+
+  /**
+   * takes a single argument that is the rule function and performs one step of the 2DCA.
+   * @param callback a function pointer
+   */
+  void step(unsigned char callback(CellularAutomaton &target, int x, int y));
+
+  /**
+   *
+   * @param path path to the input
+   * @param q_state quiescent state of the CA
+   */
   CellularAutomaton(const std::string &path,
                     int q_state);
   CellularAutomaton &operator=(const CellularAutomaton &that);
   ~CellularAutomaton();
 
+  /**
+   * @return the width of the CA
+   */
   int width() const { return this->width_; }
+  /**
+   * @return the height of the CA
+   */
   int height() const { return this->height_; }
+  /**
+   * @return the max size of the CA
+   */
   int size() const {
     const int m = std::max(this->width_, this->height_);
     if (m <= 50) {
@@ -29,6 +54,9 @@ class CellularAutomaton {
       return 1;
     }
   }
+  /**
+   * @return the gap between each cell
+   */
   int gap() const {
     const int m = std::max(this->width_, this->height_);
     if (m <= 50) {
