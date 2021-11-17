@@ -36,74 +36,74 @@ void GraphicsClient::repaint() {
 
 void GraphicsClient::setDrawingColor(int r, int g, int b) {
   MessageChannel channel(this, Mnemonic::SET_DRAWING_COLOR);
-  channel.push_color(r, g, b);
+  channel.push(r, g, b);
 }
 
 void GraphicsClient::setBackgroundColor(int r, int g, int b) {
   MessageChannel channel(this, Mnemonic::SET_BACKGROUND_COLOR);
-  channel.push_color(r, g, b);
+  channel.push(r, g, b);
 }
 
 void GraphicsClient::setPixel(int x, int y, int r, int g, int b) {
   MessageChannel channel(this, Mnemonic::SET_PIXEL);
-  channel.push_int(x);
-  channel.push_int(y);
-  channel.push_color(r, g, b);
+  channel.push(x);
+  channel.push(y);
+  channel.push(r, g, b);
 }
 
 void GraphicsClient::drawstring(int x, int y, const std::string &str) {
   MessageChannel channel(this, Mnemonic::DRAW_STRING);
-  channel.push_int(x);
-  channel.push_int(y);
-  channel.push_string(str);
+  channel.push(x);
+  channel.push(y);
+  channel.push(str);
 }
 
 void GraphicsClient::drawRectangle(int x, int y, int w, int h) {
   MessageChannel channel(this, Mnemonic::DRAW_RECTANGLE);
-  channel.push_int(x);
-  channel.push_int(y);
-  channel.push_int(w);
-  channel.push_int(h);
+  channel.push(x);
+  channel.push(y);
+  channel.push(w);
+  channel.push(h);
 }
 
 void GraphicsClient::fillRectangle(int x, int y, int w, int h) {
   MessageChannel channel(this, Mnemonic::FILL_RECTANGLE);
-  channel.push_int(x);
-  channel.push_int(y);
-  channel.push_int(w);
-  channel.push_int(h);
+  channel.push(x);
+  channel.push(y);
+  channel.push(w);
+  channel.push(h);
 }
 
 void GraphicsClient::clearRectangle(int x, int y, int w, int h) {
   MessageChannel channel(this, Mnemonic::CLEAR_RECTANGLE);
-  channel.push_int(x);
-  channel.push_int(y);
-  channel.push_int(w);
-  channel.push_int(h);
+  channel.push(x);
+  channel.push(y);
+  channel.push(w);
+  channel.push(h);
 }
 
 void GraphicsClient::drawOval(int x, int y, int w, int h) {
   MessageChannel channel(this, Mnemonic::DRAW_OVAL);
-  channel.push_int(x);
-  channel.push_int(y);
-  channel.push_int(w);
-  channel.push_int(h);
+  channel.push(x);
+  channel.push(y);
+  channel.push(w);
+  channel.push(h);
 }
 
 void GraphicsClient::fillOval(int x, int y, int w, int h) {
   MessageChannel channel(this, Mnemonic::FILL_OVAL);
-  channel.push_int(x);
-  channel.push_int(y);
-  channel.push_int(w);
-  channel.push_int(h);
+  channel.push(x);
+  channel.push(y);
+  channel.push(w);
+  channel.push(h);
 }
 
 void GraphicsClient::drawLine(int x1, int y1, int x2, int y2) {
   MessageChannel channel(this, Mnemonic::DRAW_LINE);
-  channel.push_int(x1);
-  channel.push_int(y1);
-  channel.push_int(x2);
-  channel.push_int(y2);
+  channel.push(x1);
+  channel.push(y1);
+  channel.push(x2);
+  channel.push(y2);
 }
 
 GraphicsClient::GraphicsClient(std::string url, int port) : url_(std::move(url)), port_(port), server_fd_(0) {

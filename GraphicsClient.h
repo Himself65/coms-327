@@ -44,20 +44,22 @@ class GraphicsClient {
       this->message_.push_back(0);
       this->message_.push_back(static_cast<char>(type));
     }
-    /*
+    /**
      * push an integer to the message, which length is 4;
+     * @param value
      */
-    void push_int(int value) {
+    void push(int value) {
       this->message_.push_back(static_cast<char>((value >> 12) & 0xf));
       this->message_.push_back(static_cast<char>((value >> 8) & 0xf));
       this->message_.push_back(static_cast<char>((value >> 4) & 0xf));
       this->message_.push_back(static_cast<char>(value & 0xf));
       this->length += 4;
     }
-    /*
+    /**
      * push a char to the message, which length is 2;
+     * @param item
      */
-    void push_char(char ch) {
+    void push(char ch) {
       this->message_.push_back(static_cast<char>((ch >> 4) & 0xf));
       this->message_.push_back(static_cast<char>(ch & 0xf));
       this->length += 2;
@@ -66,24 +68,27 @@ class GraphicsClient {
      * push a string to the message, auto calculate the length
      * @param string
      */
-    void push_string(const std::string &string) {
+    void push(const std::string &string) {
       for (char const &ch: string) {
-        this->push_char(ch);
+        this->push(ch);
       }
     }
     /**
      * push a color to the message, length is 3 size of chars
-     * @param string
-     */
-    void push_color(int red, int green, int blue) {
-      this->push_char(static_cast<char>(red));
-      this->push_char(static_cast<char>(green));
-      this->push_char(static_cast<char>(blue));
+     * @param red
+     * @param green
+     * @param blue
+    */
+    void push(int red, int green, int blue) {
+      this->push(static_cast<char>(red));
+      this->push(static_cast<char>(green));
+      this->push(static_cast<char>(blue));
     }
     /**
      * calculate the length, and call the sendMessage
      */
     ~MessageChannel() {
+      // calculate the length of the message
       this->message_[1] = static_cast<char>((this->length >> 12) & 0xf);
       this->message_[2] = static_cast<char>((this->length >> 8) & 0xf);
       this->message_[3] = static_cast<char>((this->length >> 4) & 0xf);
