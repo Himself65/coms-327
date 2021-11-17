@@ -37,11 +37,14 @@ class GraphicsClient {
    public:
     MessageChannel(GraphicsClient *client, Mnemonic type)
         : client_(client), length(1), message_(std::vector<char>()) {
+      // the first char is the sync signal
       this->message_.push_back(static_cast<char>(0xff));
-      this->message_.push_back(0);  // replace the length
+      // the next four chars are the length of message blocks
+      this->message_.push_back(0);  // replacement of the length
       this->message_.push_back(0);
       this->message_.push_back(0);
       this->message_.push_back(0);
+      // the following char is the type of message
       this->message_.push_back(static_cast<char>(type));
     }
     /**
@@ -93,6 +96,7 @@ class GraphicsClient {
       this->message_[2] = static_cast<char>((this->length >> 8) & 0xf);
       this->message_[3] = static_cast<char>((this->length >> 4) & 0xf);
       this->message_[4] = static_cast<char>(this->length & 0xf);
+      // send the message
       client_->sendMessage(this->message_);
     }
    private:
