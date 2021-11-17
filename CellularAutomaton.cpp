@@ -48,6 +48,11 @@ CellularAutomaton::~CellularAutomaton() {
     exit(EXIT_FAILURE);
   }
   this->file_ = nullptr;
+
+  for (int i = 0; i < this->width_; i++) {
+    delete[] this->array_[i];
+  }
+  delete[] this->array_;
 }
 
 void CellularAutomaton::connectClient(GraphicsClient &client) {
