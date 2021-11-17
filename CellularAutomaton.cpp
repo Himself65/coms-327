@@ -43,7 +43,11 @@ CellularAutomaton &CellularAutomaton::operator=(const CellularAutomaton &that) {
 }
 
 CellularAutomaton::~CellularAutomaton() {
-  fclose(this->file_);
+  if (fclose(this->file_) != 0) {
+    std::cerr << "cannot close the file" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  this->file_ = nullptr;
 }
 
 void CellularAutomaton::connectClient(GraphicsClient &client) {
