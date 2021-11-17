@@ -28,6 +28,11 @@ enum class Mnemonic {
 
 class GraphicsClient {
  public:
+  /**
+   * MessageChannel is a helper class to send message to the server.
+   * Using destructor, you don't need to worry about call the repeated functions.
+   * And it will also auto calculate the length of the message
+   */
   class MessageChannel {
    public:
     MessageChannel(GraphicsClient *client, Mnemonic type)
@@ -39,6 +44,9 @@ class GraphicsClient {
       this->message_.push_back(0);
       this->message_.push_back(static_cast<char>(type));
     }
+    /*
+     * push an integer to the message, which length is 4;
+     */
     void push_int(int value) {
       this->message_.push_back(static_cast<char>((value >> 12) & 0xf));
       this->message_.push_back(static_cast<char>((value >> 8) & 0xf));
@@ -46,21 +54,35 @@ class GraphicsClient {
       this->message_.push_back(static_cast<char>(value & 0xf));
       this->length += 4;
     }
+    /*
+     * push a char to the message, which length is 2;
+     */
     void push_char(char ch) {
       this->message_.push_back(static_cast<char>((ch >> 4) & 0xf));
       this->message_.push_back(static_cast<char>(ch & 0xf));
       this->length += 2;
     }
+    /**
+     * push a string to the message, auto calculate the length
+     * @param string
+     */
     void push_string(const std::string &string) {
       for (char const &ch: string) {
         this->push_char(ch);
       }
     }
+    /**
+     * push a color to the message, length is 3 size of chars
+     * @param string
+     */
     void push_color(int red, int green, int blue) {
       this->push_char(static_cast<char>(red));
       this->push_char(static_cast<char>(green));
       this->push_char(static_cast<char>(blue));
     }
+    /**
+     * calculate the length, and call the sendMessage
+     */
     ~MessageChannel() {
       this->message_[1] = static_cast<char>((this->length >> 12) & 0xf);
       this->message_[2] = static_cast<char>((this->length >> 8) & 0xf);
