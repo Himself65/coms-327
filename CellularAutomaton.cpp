@@ -61,29 +61,34 @@ void CellularAutomaton::step(unsigned char (*callback)(CellularAutomaton &, int,
     new_data[i] = new int[this->width()];
   }
 
+  // simulate the next step
   for (int x = 0; x < this->width(); ++x) {
     for (int y = 0; y < this->height(); ++y) {
       new_data[x][y] = callback(*this, x, y);
     }
   }
 
+  // save the new data
   for (int x = 0; x < this->width(); ++x) {
     for (int y = 0; y < this->height(); ++y) {
       this->array_[x][y] = new_data[x][y];
     }
   }
+
+  // send the data to the server
   this->client_->clear();
   const int size = this->size();
   const int gap = this->gap();
   for (int x = 0; x < this->width(); ++x) {
     for (int y = 0; y < this->height(); ++y) {
-      if (new_data[x][y] != 0) {
+      if (this->array_[x][y] != 0) {
         this->client_->fillRectangle(x * size + gap * size, y * size + gap * size, size, size);
       }
     }
   }
   this->client_->repaint();
 
+  // free the new_data
   for (int i = 0; i < this->width_; i++) {
     delete[] new_data[i];
   }
