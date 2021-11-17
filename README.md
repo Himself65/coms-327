@@ -5,7 +5,7 @@
 ```shell
 make
 
-./gol 2 ./input
+./gol ./input
 ```
 
 ## Features
