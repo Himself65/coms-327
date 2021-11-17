@@ -27,7 +27,10 @@ CellularAutomaton &CellularAutomaton::operator=(const CellularAutomaton &that) {
   if (this != &that) {
     this->path_ = std::string(that.path_);
     this->q_state_ = that.q_state_;
-    fclose(this->file_);
+    if (fclose(this->file_) != 0) {
+      std::cerr << "cannot close the file" << std::endl;
+      exit(EXIT_FAILURE);
+    }
     this->file_ = fdopen(dup(fileno(that.file_)), "r"); // open that file
 
     fscanf(this->file_, "%d %d", &this->width_, &this->height_);
