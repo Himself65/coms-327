@@ -30,7 +30,13 @@ class GraphicsClient {
  public:
   class MessageChannel {
    public:
-    MessageChannel(GraphicsClient *client, Mnemonic type) : client_(client), message_(std::vector<char>()) {
+    MessageChannel(GraphicsClient *client, Mnemonic type)
+        : client_(client), length(1), message_(std::vector<char>()) {
+      this->message_.push_back(static_cast<char>(0xff));
+      this->message_.push_back(0);  // replace the length
+      this->message_.push_back(0);
+      this->message_.push_back(0);
+      this->message_.push_back(0);
       this->message_.push_back(static_cast<char>(type));
     }
     void push_int(int value) {
@@ -38,10 +44,12 @@ class GraphicsClient {
       this->message_.push_back(static_cast<char>((value >> 8) & 0xf));
       this->message_.push_back(static_cast<char>((value >> 4) & 0xf));
       this->message_.push_back(static_cast<char>(value & 0xf));
+      this->length += 4;
     }
     void push_char(char ch) {
       this->message_.push_back(static_cast<char>((ch >> 4) & 0xf));
       this->message_.push_back(static_cast<char>(ch & 0xf));
+      this->length += 2;
     }
     void push_string(const std::string &string) {
       for (char const &ch: string) {
@@ -54,10 +62,15 @@ class GraphicsClient {
       this->push_char(static_cast<char>(blue));
     }
     ~MessageChannel() {
+      this->message_[1] = static_cast<char>((this->length >> 12) & 0xf);
+      this->message_[2] = static_cast<char>((this->length >> 8) & 0xf);
+      this->message_[3] = static_cast<char>((this->length >> 4) & 0xf);
+      this->message_[4] = static_cast<char>(this->length & 0xf);
       client_->sendMessage(this->message_);
     }
    private:
     GraphicsClient *client_;
+    int length;
     std::vector<char> message_;
   };
 

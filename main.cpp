@@ -2,18 +2,24 @@
 #include "CellularAutomaton.h"
 
 unsigned char aRule(CellularAutomaton &ca, int x, int y) {
-  int width = ca.width();
-  int height = ca.height();
-  int count = 0;
-  if (ca[((x - 1) + width) % width][((y - 1) + height) % height] != 0) count++;  // left top
-  if (ca[((x - 1) + width) % width][y] != 0) count++; // middle left
-  if (ca[((x - 1) + width) % width][(y + 1) % height] != 0) count++; // left bottom
-  if (ca[x][((y - 1) + height) % height] != 0) count++; // middle top
-  if (ca[x][(y + 1) % height] != 0) count++; // center bottom
+  const int width = ca.width();
+  const int height = ca.height();
+  const int lx = (x + width - 1) % width;
+  const int rx = (x + 1) % width;
 
-  if (ca[(x + 1) % width][((y - 1) + height) % height] != 0) count++; // right top
-  if (ca[(x + 1) % width][y] != 0) count++; // right middle
-  if (ca[(x + 1) % width][(y + 1) % height] != 0) count++; // right bottom
+  const int uy = (y + height - 1) % height;
+  const int ly = (y + 1) % height;
+
+  int count = 0;
+  if (ca[lx][uy] != 0) count++;  // left top
+  if (ca[lx][y] != 0) count++; // middle left
+  if (ca[lx][ly] != 0) count++; // left bottom
+  if (ca[x][uy] != 0) count++; // middle top
+  if (ca[x][ly] != 0) count++; // center bottom
+
+  if (ca[rx][uy] != 0) count++; // right top
+  if (ca[rx][y] != 0) count++; // right middle
+  if (ca[rx][ly] != 0) count++; // right bottom
   int exit = 0;
   // check
   if (ca[x][y] == 0) {
@@ -30,7 +36,7 @@ unsigned char aRule(CellularAutomaton &ca, int x, int y) {
       exit = 0;
     }
   }
-  //  printf("pos(%d, %d) %d %d %d from %d~> %d\n", ca->width, ca->height, x, y, count, ca->cadata[x][y], exit);
+  //  printf("pos(%d, %d) %d from %d~> %d\n", x, y, count, ca[x][y], exit);
   return exit;
 }
 
@@ -46,15 +52,21 @@ int main(int argc, char *argv[]) {
   const int port = 7777;
   GraphicsClient client(address, port);
   automaton.connectClient(client);
+  client.clear();
+  client.repaint();
   client.setBackgroundColor(0, 0, 0);
   client.setDrawingColor(255, 255, 255);
   client.clear();
-  while (std::cin) {
-    char ch;
-    std::cin >> ch;
+  client.repaint();
+  int step = 0;
+  while (true) {
+    int ch = getchar();
     if (ch == '\n') {
+//      std::cout << "step: " << step << std::endl;
+      step++;
       automaton.step(aRule);
     } else {
+      std::cout << "exit" << std::endl;
       break;
     }
   }
