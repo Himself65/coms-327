@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
@@ -23,11 +24,13 @@ enum class Mnemonic {
   DRAW_OVAL = 10, // Draw the specified oval at the specified location
   FILL_OVAL = 11, // Draw and fill the specified oval at the specified location
   REPAINT = 12, // Cause the graphics server to update the display
-  DRAW_LINE = 13  // Draw the specified line
+  DRAW_LINE = 13,  // Draw the specified line
+  FILE_REQUEST = 14 // Request a file from the graphics server
 };
 
 class GraphicsClient {
  public:
+  typedef void (*Callback)();
   /**
    * MessageChannel is a helper class to send message to the server.
    * Using destructor, you don't need to worry about call the repeated functions.
@@ -202,6 +205,10 @@ class GraphicsClient {
    * send the redraw (repaint) signal to the attached graphics server.
    */
   void repaint();
+
+  void fileRequest();
+
+  std::vector<unsigned char> *handle_response() const;
 
   /**
    *

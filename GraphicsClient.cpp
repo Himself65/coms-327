@@ -106,6 +106,24 @@ void GraphicsClient::drawLine(int x1, int y1, int x2, int y2) {
   channel.push(y2);
 }
 
+void GraphicsClient::fileRequest() {
+  MessageChannel channel(this, Mnemonic::FILE_REQUEST);
+}
+
+std::vector<unsigned char> *GraphicsClient::handle_response() const {
+  int count;
+  ioctl(this->server_fd_, FIONREAD, &count);
+  if (count > 0) {
+    auto* response = new std::vector<unsigned char>(count);
+    if (count != read(this->server_fd_, response->data(), count)) {
+      std::cerr << "incorrect response data size" << std::endl;
+    }
+    return response;
+  } else {
+    return new std::vector<unsigned char>();
+  }
+}
+
 GraphicsClient::GraphicsClient(std::string url, int port) : url_(std::move(url)), port_(port), server_fd_(0) {
   connectServer();
 }
