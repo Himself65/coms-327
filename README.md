@@ -5,7 +5,9 @@
 ```shell
 make
 
-./gol ./input
+vim input # edit to your favourite default cellular
+
+./gol
 ```
 
 ## Features
