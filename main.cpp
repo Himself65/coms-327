@@ -13,6 +13,7 @@ int main() {
   client.clear();
   client.repaint();
   automaton.connectClient(client);
+  automaton.loadFile("./input");  // default input
   automaton.simulate();
   return 0;
 }

@@ -19,7 +19,7 @@ struct Type {
 };
 
 static Type
-    Large = {10, 4},
+    Large = {5, 1},
     Middle = {4, 1},
     Small = {1, 1};
 

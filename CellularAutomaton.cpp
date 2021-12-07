@@ -311,6 +311,7 @@ void CellularAutomaton::random() {
       this->array_[x][y] = rand() % 2;
     }
   }
+  this->print();
 }
 
 void CellularAutomaton::reset() {
