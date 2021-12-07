@@ -42,6 +42,7 @@ CellularAutomaton::CellularAutomaton()
     : client_(nullptr), file_(nullptr),
       mode_(Mode::Pause), type_(Large),
       width_(0), height_(0) {
+  srand(time(NULL));
 }
 
 void CellularAutomaton::loadFile(const std::string &path) {
@@ -74,6 +75,7 @@ void CellularAutomaton::loadFile(const std::string &path) {
       this->init_array_[x][y] = v;
     }
   }
+  this->print();
 }
 
 CellularAutomaton &CellularAutomaton::operator=(const CellularAutomaton &that) {
@@ -162,7 +164,6 @@ void CellularAutomaton::simulate() {
     auto *response = client_->handle_response();
     if (!response->empty()) {
       auto index = 0;
-      auto prevX = 0, prevY = 0;
       while (index < response->size()) {
         if (response->at(index++) != 0xFF) {
           std::cerr << "sync error" << std::endl;
@@ -193,13 +194,6 @@ void CellularAutomaton::simulate() {
                                response->at(index + 7));
           index += 8;
           std::cout << "you clicked: " << x << ", " << y << std::endl;
-          if (x == prevX && y == prevY) {
-            std::cout << "continue" << std::endl;
-            continue;
-          }
-          // skip click in three times on macOS
-          prevX = x;
-          prevY = y;
 
           for (const auto &pair: this->buttons_) {
             const auto &pos = pair.first;
@@ -233,16 +227,19 @@ void CellularAutomaton::simulate() {
           }
         } else {
           switch (response->at(index++)) {
-            case 0x0E: {
+            case 0x0A: {
               std::string path;
-              for (std::vector<char>::size_type i = index; i < response->size(); i += 2) {
+              for (auto i = index;
+                   i < response->size();
+                   index += 2, i += 2) {
                 const auto h = response->at(i);
                 const auto l = response->at(i + 1);
-                const auto ch = static_cast<unsigned char>(((h << 4) & 0xf) + (l & 0xf));
+                const auto ch = static_cast<unsigned char>((h << 4) + l);
                 path.push_back(static_cast<char>(ch));
               }
               std::cout << path << std::endl;
               this->loadFile(path);
+              break;
             }
             default: {
               std::cerr << "incorrect type" << std::endl;
@@ -292,17 +289,8 @@ void CellularAutomaton::step() {
     }
   }
 
-  // send the data to the server
-  this->client_->clearRectangle(0, 0, 600, 600);
-  const int size = this->size();
-  const int gap = this->gap();
-  for (int x = 0; x < this->width(); ++x) {
-    for (int y = 0; y < this->height(); ++y) {
-      if (this->array_[x][y] != 0) {
-        this->client_->fillRectangle(x * size + gap * size, y * size + gap * size, size, size);
-      }
-    }
-  }
+  // print the new data
+  this->print();
 
   // free the new_data
   for (int i = 0; i < this->height(); i++) {
@@ -318,10 +306,21 @@ void CellularAutomaton::run() {
 
 void CellularAutomaton::random() {
   std::cout << "random" << std::endl;
+  for (int y = 0; y < this->height(); y++) {
+    for (int x = 0; x < this->width(); x++) {
+      this->array_[x][y] = rand() % 2;
+    }
+  }
 }
 
 void CellularAutomaton::reset() {
   std::cout << "reset" << std::endl;
+  for (int y = 0; y < this->height(); y++) {
+    for (int x = 0; x < this->width(); x++) {
+      this->array_[x][y] = this->init_array_[x][y];
+    }
+  }
+  this->print();
 }
 
 void CellularAutomaton::pause() {
@@ -347,5 +346,19 @@ void CellularAutomaton::select_size(int size) {
     this->type_ = Middle;
   } else {
     this->type_ = Small;
+  }
+  this->print();
+}
+
+void CellularAutomaton::print() {
+  this->client_->clearRectangle(0, 0, 600, 600);
+  const int size = this->size();
+  const int gap = this->gap();
+  for (int x = 0; x < this->width(); ++x) {
+    for (int y = 0; y < this->height(); ++y) {
+      if (this->array_[x][y] != 0) {
+        this->client_->fillRectangle(x * size + gap * size, y * size + gap * size, size, size);
+      }
+    }
   }
 }

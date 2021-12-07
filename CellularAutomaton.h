@@ -94,6 +94,8 @@ class CellularAutomaton {
   int *operator[](int x);
 
  private:
+  /* print the cell */
+  void print();
   void step();
   void run();
   void pause();
