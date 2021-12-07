@@ -1,7 +1,7 @@
 #include "GraphicsClient.h"
 #include "CellularAutomaton.h"
 
-int main(int argc, char *argv[]) {
+int main() {
   CellularAutomaton automaton;
   const std::string address = "localhost";
   const int port = 7777;
