@@ -6,6 +6,9 @@
 #include <iostream>
 #include "GraphicsClient.h"
 
+/**
+ * position of the data
+ */
 struct Position {
   int x;
   int y;
@@ -13,6 +16,9 @@ struct Position {
   int height;
 };
 
+/**
+ * type of board size
+ */
 struct Type {
   int size;
   int gap;
@@ -24,14 +30,16 @@ static Type
     Small = {1, 1};
 
 enum class Mode {
-  Running,
-  Pause,
-  Quit,
+  Running,  // when user click 'run'
+  Pause,  // when user click 'pause'
+  Quit, // when user click 'quit'
 };
 
 class CellularAutomaton {
  public:
-  typedef void (*Callback)();
+  /**
+   * init button by using constructor function
+   */
   class ButtonScope {
    public:
     ButtonScope(CellularAutomaton *cellular_automaton,
@@ -48,7 +56,6 @@ class CellularAutomaton {
       }
     }
     ~ButtonScope() = default;
-   private:
   };
   /**
    * takes a single reference parameter to a GraphicsClient object and
@@ -57,8 +64,15 @@ class CellularAutomaton {
    */
   void connectClient(GraphicsClient &client);
 
+  /**
+   * load the file from the path
+   * @param path a string which is the path of file
+   */
   void loadFile(const std::string &path);
 
+  /**
+   * start to simulate cellular automaton
+   */
   void simulate();
 
   /**
@@ -94,15 +108,42 @@ class CellularAutomaton {
   int *operator[](int x);
 
  private:
-  /* print the cell */
+  /**
+   * print the cell to the screen
+   */
   void print();
+  /**
+   * simulate next step
+   */
   void step();
+  /**
+   * switch to running mode
+   */
   void run();
+  /**
+   * switch to pause mode
+   */
   void pause();
+  /**
+   * reset the board
+   */
   void reset();
+  /**
+   * random the board
+   */
   void random();
+  /**
+   * load file
+   */
   void load();
+  /**
+   * quit the game
+   */
   void quit();
+  /**
+   * change the size
+   * @param size 1, 2 or 3
+   */
   void select_size(int size);
 
   GraphicsClient *client_;
@@ -113,11 +154,11 @@ class CellularAutomaton {
   Mode mode_;
   Type &type_;
 
-  int width_{};
-  int height_{};
+  int width_;
+  int height_;
 
-  int **init_array_{};
-  int **array_{};
+  int **init_array_;
+  int **array_;
 };
 
 #endif
